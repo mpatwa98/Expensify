@@ -7,7 +7,7 @@
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "yarn run dev --prefix client",
-    "dev": "concurrently \"yarn run server\" \"yarn run client\" "
+    "dev": "concurrently \"yarn run start\" \"yarn run client\" "
   },
   "keywords": [],
   "author": "mpatwa98",

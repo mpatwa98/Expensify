@@ -7,7 +7,7 @@ import Spinner from "../components/Spinner";
 export default function Login() {
 
   const api = axios.create({
-    baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
+    baseURL: "http://localhost:8080", // Specify the base URL for your API
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
