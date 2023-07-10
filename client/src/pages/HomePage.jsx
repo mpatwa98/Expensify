@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, message, Modal, Select, Table, DatePicker } from "antd";
-// import { UnorderedListOutlined, AreaChartOutlined } from "@ant-design/icons";
+import { UnorderedListOutlined, AreaChartOutlined } from "@ant-design/icons";
 import Layout from "./../components/Layout/Layout";
 import axios from "axios";
 import Spinner from "./../components/Spinner";
 import moment from "moment";
-// import Analytics from "../components/Analytics";
+import Analytics from "../components/Analytics";
 const { RangePicker } = DatePicker;
 
 const HomePage = () => {
@@ -125,7 +125,7 @@ const HomePage = () => {
             />
           )}
         </div>
-        {/* <div className="switch-icons">
+        <div className="switch-icons">
           <UnorderedListOutlined
             className={`mx-2 ${
               viewData === "table" ? "active-icon" : "inactive-icon"
@@ -138,7 +138,7 @@ const HomePage = () => {
             }`}
             onClick={() => setViewData("analytics")}
           />
-        </div> */}
+        </div>
         <div>
           <button
             className="btn btn-primary"
