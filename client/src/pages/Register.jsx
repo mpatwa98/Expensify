@@ -16,7 +16,7 @@ export default function Register() {
     try {
       setLoading(true);
       await api.post("/users/register", values);
-      message.success("Registeration Successfull");
+      message.success("Registration Successful");
       setLoading(false);
       navigate("/login");
     } catch (error) {
@@ -47,8 +47,8 @@ export default function Register() {
             <Input type="password" />
           </Form.Item>
           <div className="d-flex justify-content-between">
-            <Link to="/login">Already Register ? Cleck Here to login</Link>
-            <button className="btn btn-primary">Resgiter</button>
+            <Link to="/login">Already Register ? Click Here to login</Link>
+            <button className="btn btn-primary">Register</button>
           </div>
         </Form>
       </div>

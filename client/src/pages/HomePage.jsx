@@ -9,7 +9,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [allTransaction, setAllTransaction] = useState([]);
 
-  //table data
+  // table data
   const columns = [
     {
       title: "Date",
@@ -36,12 +36,16 @@ export default function HomePage() {
     },
   ];
 
-  //getall transactions
+  const api = axios.create({
+    baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
+  });
+
+  // get All transactions
   const getAllTransactions = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
-      const res = await axios.post("/transactions/get-transaction", {
+      const res = await api.post("/transactions/get-transaction", {
         userId: user._id,
       });
       setLoading(false);
@@ -63,7 +67,7 @@ export default function HomePage() {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
-      await axios.post("/transactions/add-transaction", {
+      await api.post("/transactions/add-transaction", {
         ...values,
         userId: user._id,
       });
