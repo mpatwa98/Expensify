@@ -2,16 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-// import Spinner from "../components/Spinner";
+import Spinner from "../components/Spinner";
 
 export default function Login() {
+
+  const api = axios.create({
+    baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
+  });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   //from submit
   const submitHandler = async (values) => {
     try {
       setLoading(true);
-      const { data } = await axios.post("/users/login", values);
+      const { data } = await api.post("/users/login", values);
       setLoading(false);
       message.success("login success");
       localStorage.setItem(

@@ -1,18 +1,22 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-// import Spinner from "../components/Spinner";
+import Spinner from "../components/Spinner";
 
 export default function Register() {
+  const api = axios.create({
+    baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
+  });
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  // form submit
+  //from submit
   const submitHandler = async (values) => {
     try {
       setLoading(true);
-      await axios.post("/users/register", values);
-      message.success("Registration Successful");
+      await api.post("/users/register", values);
+      message.success("Registeration Successfull");
       setLoading(false);
       navigate("/login");
     } catch (error) {
@@ -21,7 +25,7 @@ export default function Register() {
     }
   };
 
-  // prevent for login user
+  //prevent for login user
   useEffect(() => {
     if (localStorage.getItem("user")) {
       navigate("/");
@@ -43,8 +47,8 @@ export default function Register() {
             <Input type="password" />
           </Form.Item>
           <div className="d-flex justify-content-between">
-            <Link to="/login">Already Register ? Click Here to login</Link>
-            <button className="btn btn-primary">Register</button>
+            <Link to="/login">Already Register ? Cleck Here to login</Link>
+            <button className="btn btn-primary">Resgiter</button>
           </div>
         </Form>
       </div>

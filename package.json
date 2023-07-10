@@ -5,13 +5,16 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "client": "yarn run dev --prefix client",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\" "
   },
   "keywords": [],
   "author": "mpatwa98",
   "license": "MIT",
   "dependencies": {
     "colors": "^1.4.0",
+    "concurrently": "^8.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
