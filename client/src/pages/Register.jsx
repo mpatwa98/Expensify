@@ -6,7 +6,7 @@ import Spinner from "../components/Spinner";
 
 export default function Register() {
   const api = axios.create({
-    baseURL: "http://localhost:8080", // Specify the base URL for your API
+    baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
   });
 
   const navigate = useNavigate();
