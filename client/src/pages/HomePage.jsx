@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, message, Modal, Select, Table, DatePicker } from "antd";
-import {
-  UnorderedListOutlined,
-  AreaChartOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { UnorderedListOutlined, AreaChartOutlined } from "@ant-design/icons";
 import Layout from "./../components/Layout/Layout";
 import axios from "axios";
 import Spinner from "./../components/Spinner";
@@ -21,7 +16,6 @@ const HomePage = () => {
   const [selectedDate, setSelectedDate] = useState([]);
   const [type, setType] = useState("all");
   const [viewData, setViewData] = useState("table");
-  const [editable, setEditable] = useState(null);
 
   const api = axios.create({
     baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
@@ -32,7 +26,7 @@ const HomePage = () => {
     {
       title: "Date",
       dataIndex: "date",
-      render: (text) => <span>{moment(text).format("YYYY-MM-DD")}</span>,
+      render: (text) => <span>{moment(text).format("DD-MM-YYYY")}</span>,
     },
     {
       title: "Amount",
@@ -52,32 +46,11 @@ const HomePage = () => {
     },
     {
       title: "Actions",
-      render: (text, record) => (
-        <div>
-          <EditOutlined
-            onClick={() => {
-              setEditable(record);
-              setShowModal(true);
-            }}
-          />
-          <DeleteOutlined
-            className="mx-2"
-            onClick={() => {
-              handleDelete(record);
-            }}
-          />
-        </div>
-      ),
     },
   ];
 
-  // const editAllTransaction = allTransaction.map((item) => ({
-  //   ...item,
-  //   key: item._id, // Assuming 'id' is the unique identifier field in your data
-  // }));
-  // setAllTransaction(editAllTransaction);
-
   //getall transactions
+
   //useEffect Hook
   useEffect(() => {
     const getAllTransactions = async () => {
@@ -99,53 +72,23 @@ const HomePage = () => {
       }
     };
     getAllTransactions();
-  }, [frequency, selectedDate, type, setAllTransaction]);
-
-  //delete handler
-  const handleDelete = async (record) => {
-    try {
-      setLoading(true);
-      await api.post("/transactions/delete-transaction", {
-        transactionId: record._id,
-      });
-      setLoading(false);
-      message.success("Transaction Deleted!");
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-      message.error("unable to delete");
-    }
-  };
+  }, [frequency, selectedDate, type]);
 
   // form handling
   const handleSubmit = async (values) => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
-      if (editable) {
-        console.log(values);
-        await api.post("/transactions/edit-transaction", {
-          payload: {
-            ...values,
-            userId: user._id,
-          },
-          transactionId: editable._id,
-        });
-        setLoading(false);
-        message.success("Transaction Updated Successfully");
-      } else {
-        await api.post("/transactions/add-transaction", {
-          ...values,
-          userId: user._id,
-        });
-        setLoading(false);
-        message.success("Transaction Added Successfully");
-      }
+      await api.post("/transactions/add-transaction", {
+        ...values,
+        userId: user._id,
+      });
+      setLoading(false);
+      message.success("Transaction Added Successfully");
       setShowModal(false);
-      setEditable(null);
     } catch (error) {
       setLoading(false);
-      message.error("please fill all fields");
+      message.error("Failed to add transaction");
     }
   };
 
@@ -168,7 +111,7 @@ const HomePage = () => {
             />
           )}
         </div>
-        <div className="filter-tab ">
+        <div>
           <h6>Select Type</h6>
           <Select value={type} onChange={(values) => setType(values)}>
             <Select.Option value="all">ALL</Select.Option>
@@ -207,28 +150,20 @@ const HomePage = () => {
       </div>
       <div className="content">
         {viewData === "table" ? (
-          <Table
-            columns={columns}
-            dataSource={allTransaction}
-            // rowKey={user._id}
-          />
+          <Table columns={columns} dataSource={allTransaction} />
         ) : (
           <Analytics allTransaction={allTransaction} />
         )}
       </div>
       <Modal
-        title={editable ? "Edit Transaction" : "Add Transaction"}
+        title="Add Transaction"
         open={showModal}
         onCancel={() => setShowModal(false)}
         footer={false}
       >
-        <Form
-          layout="vertical"
-          onFinish={handleSubmit}
-          initialValues={editable}
-        >
+        <Form layout="vertical" onFinish={handleSubmit}>
           <Form.Item label="Amount" name="amount">
-            <Input type="text" required />
+            <Input type="text" />
           </Form.Item>
           <Form.Item label="type" name="type">
             <Select>
@@ -253,10 +188,10 @@ const HomePage = () => {
             <Input type="date" />
           </Form.Item>
           <Form.Item label="Reference" name="reference">
-            <Input type="text" required />
+            <Input type="text" />
           </Form.Item>
           <Form.Item label="Description" name="description">
-            <Input type="text" required />
+            <Input type="text" />
           </Form.Item>
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary">
