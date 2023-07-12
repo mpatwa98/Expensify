@@ -22,6 +22,21 @@ const HomePage = () => {
   const [type, setType] = useState("all");
   const [viewData, setViewData] = useState("table");
   const [editable, setEditable] = useState(null);
+  const [form] = Form.useForm();
+
+  // const [editable, setEditable] = useState({
+  //   date:"",
+  //   amount:"",
+  //   type:"",
+  //   category:"",
+  //   reference:"",
+  // });
+
+  const handleEdit = (record) => {
+    setEditable(record);
+    form.setFieldsValue(record);
+    setShowModal(true);
+  };
 
   const api = axios.create({
     baseURL: "http://localhost:8080/api/v1", // Specify the base URL for your API
@@ -54,14 +69,7 @@ const HomePage = () => {
       title: "Actions",
       render: (text, record) => (
         <div>
-          <EditOutlined
-            onClick={() => {
-              setEditable(record);
-              console.log("edit button clicked")
-              console.log(editable);
-              setShowModal(true);
-            }}
-          />
+          <EditOutlined onClick={() => handleEdit(record)} />
           <DeleteOutlined
             className="mx-2"
             onClick={() => {
@@ -74,28 +82,29 @@ const HomePage = () => {
   ];
 
   // getall transactions
+  const getAllTransactions = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      setLoading(true);
+      const res = await api.post("/transactions/get-transaction", {
+        userId: user._id,
+        frequency,
+        selectedDate,
+        type,
+      });
+      setLoading(false);
+      setAllTransaction(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+      message.error("Fetch Issue With Transaction");
+    }
+  };
+
   // useEffect Hook
   useEffect(() => {
-    const getAllTransactions = async () => {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        setLoading(true);
-        const res = await api.post("/transactions/get-transaction", {
-          userId: user._id,
-          frequency,
-          selectedDate,
-          type,
-        });
-        setLoading(false);
-        setAllTransaction(res.data);
-        console.log(res.data);
-      } catch (error) {
-        console.log(error);
-        message.error("Fetch Issue With Transaction");
-      }
-    };
     getAllTransactions();
-  }, [frequency, selectedDate, type, setAllTransaction]);
+  }, [frequency, selectedDate, type]);
 
   //delete handler
   const handleDelete = async (record) => {
@@ -104,6 +113,7 @@ const HomePage = () => {
       await api.post("/transactions/delete-transaction", {
         transactionId: record._id,
       });
+      getAllTransactions();
       setLoading(false);
       message.success("Transaction Deleted!");
     } catch (error) {
@@ -118,6 +128,7 @@ const HomePage = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
+      // const updatedItem = { ...editable, ...values };
       if (editable) {
         console.log(values);
         await api.post("/transactions/edit-transaction", {
@@ -137,11 +148,13 @@ const HomePage = () => {
         setLoading(false);
         message.success("Transaction Added Successfully");
       }
+      getAllTransactions();
       setShowModal(false);
       setEditable(null);
     } catch (error) {
+      console.log(error);
       setLoading(false);
-      message.error("please fill all fields");
+      message.error("something wrong");
     }
   };
 
@@ -196,8 +209,10 @@ const HomePage = () => {
           <button
             className="btn btn-primary"
             onClick={() => {
+              setEditable(null);
+              form.resetFields();
               setShowModal(true);
-              console.log("Add button clicked")
+              console.log("Add button clicked");
               console.log(editable);
             }}
           >
@@ -219,19 +234,13 @@ const HomePage = () => {
       <Modal
         title={editable ? "Edit Transaction" : "Add Transaction"}
         open={showModal}
+        onOk={handleSubmit}
         onCancel={() => {
           setShowModal(false);
-          setEditable(null);
-          console.log("Cancel button clicked")
-          console.log(editable)
         }}
         footer={false}
       >
-        <Form
-          layout="vertical"
-          onFinish={handleSubmit}
-          initialValues={editable}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item label="Amount" name="amount">
             <Input type="text" required />
           </Form.Item>
@@ -256,6 +265,7 @@ const HomePage = () => {
           </Form.Item>
           <Form.Item label="Date" name="date">
             <Input type="date" required />
+            {/* <DatePicker/> */}
           </Form.Item>
           <Form.Item label="Reference" name="reference">
             <Input type="text" required />
